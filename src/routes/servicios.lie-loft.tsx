@@ -58,7 +58,7 @@ const PROCESS = [
 
 function Page() {
   return (
-    <div className="bg-[#050606] text-primary-foreground">
+    <div className="bg-surface text-primary-foreground">
       <ServiceHero
         title="Lie & Loft"
         description="Ajustamos el ángulo y el loft de tus palos para mejorar dirección, trayectoria y consistencia en cada golpe."

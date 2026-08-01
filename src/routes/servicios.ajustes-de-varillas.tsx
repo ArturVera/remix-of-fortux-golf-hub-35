@@ -58,7 +58,7 @@ const PROCESS = [
 
 function Page() {
   return (
-    <div className="bg-[#050606] text-primary-foreground">
+    <div className="bg-surface text-primary-foreground">
       <ServiceHero
         title="Ajuste de varillas"
         description="Reparamos, ajustamos y cambiamos las varillas de tus palos para recuperar control, distancia y confianza en cada golpe."

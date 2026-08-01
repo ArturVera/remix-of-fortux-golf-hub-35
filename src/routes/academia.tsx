@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { waLink } from "@/lib/site";
+import { Reveal } from "@/components/site/Reveal";
+import { useParallax } from "@/hooks/useParallax";
 
 export const Route = createFileRoute("/academia")({
   head: () => ({
@@ -111,6 +113,7 @@ const COURSES = [
 function Page() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", accept: false });
   const [sending, setSending] = useState(false);
+  const heroParallaxRef = useParallax<HTMLDivElement>(28);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,11 +134,14 @@ function Page() {
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate overflow-hidden bg-[#050606] border-b border-white/[0.06]">
+      <section className="relative isolate overflow-hidden bg-surface border-b border-white/[0.06]">
         <div
+          ref={heroParallaxRef}
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-[62%]"
+          className="pointer-events-none absolute right-0 w-[62%]"
           style={{
+            top: -40,
+            bottom: -40,
             backgroundImage: `url(${heroCoaching.url})`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
@@ -152,7 +158,7 @@ function Page() {
           style={{ background: "radial-gradient(closest-side, rgba(185,217,134,0.07), transparent 70%)" }}
         />
         <div className="container-fortux relative py-16 md:py-20">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Academia Fortux
             </span>
@@ -165,7 +171,7 @@ function Page() {
               objetivos y tu manera de jugar.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-[#B9D986] text-[#0A0B0D] hover:bg-[#cbe69b]">
+              <Button asChild size="lg" className="bg-[#B9D986] text-surface-raised hover:bg-[#cbe69b]">
                 <a href="#contacto">Reservar clase</a>
               </Button>
               <Button
@@ -177,14 +183,14 @@ function Page() {
                 <a href="#tarifas">Ver tarifas</a>
               </Button>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* BONOS */}
-      <section className="bg-[#050606] py-20 md:py-24 border-b border-white/[0.06]">
+      <section className="bg-surface py-20 md:py-24 border-b border-white/[0.06]">
         <div className="container-fortux grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="relative overflow-hidden rounded-[14px] border border-white/[0.08]">
+          <Reveal className="relative overflow-hidden rounded-[14px] border border-white/[0.08]">
             <img
               src={bonosImg.url}
               alt="Sesión de coaching personalizado Fortux"
@@ -197,8 +203,8 @@ function Page() {
               className="pointer-events-none absolute inset-0"
               style={{ background: "linear-gradient(180deg, rgba(5,6,6,0) 55%, rgba(5,6,6,0.55) 100%)" }}
             />
-          </div>
-          <div>
+          </Reveal>
+          <Reveal delay={100}>
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Bonos exclusivos
             </span>
@@ -214,7 +220,7 @@ function Page() {
               hacia un golf más sólido, preciso y disfrutable.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild className="bg-[#B9D986] text-[#0A0B0D] hover:bg-[#cbe69b]">
+              <Button asChild className="bg-[#B9D986] text-surface-raised hover:bg-[#cbe69b]">
                 <a href="#tarifas">Ver bonos</a>
               </Button>
               <Button
@@ -225,14 +231,14 @@ function Page() {
                 <a href="#contacto">Contáctanos</a>
               </Button>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* TARIFAS */}
-      <section id="tarifas" className="bg-[#050606] py-24 md:py-32 border-b border-white/[0.06]">
+      <section id="tarifas" className="bg-surface py-24 md:py-32 border-b border-white/[0.06]">
         <div className="container-fortux">
-          <div className="mx-auto max-w-3xl text-center">
+          <Reveal className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Tarifas <span className="h-px w-6 bg-[#B9D986]" />
             </span>
@@ -242,13 +248,15 @@ function Page() {
             <p className="mt-5 text-[15px] leading-relaxed text-white/64">
               Se incluyen bolas de prácticas y material. Mismo precio entre semana o en fin de semana.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-16 md:mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {TARIFFS.map((t) => (
-              <article
+            {TARIFFS.map((t, i) => (
+              <Reveal
+                as="article"
                 key={t.name}
-                className={`group relative flex flex-col overflow-hidden rounded-[12px] border bg-[#0B0D0E] transition-all duration-500 hover:-translate-y-0.5 ${
+                delay={Math.min(i, 5) * 70}
+                className={`group relative flex flex-col overflow-hidden rounded-[12px] border bg-surface-card transition-all duration-500 hover:-translate-y-0.5 ${
                   t.highlight
                     ? "border-[#B9D986]/45 hover:border-[#B9D986]/70"
                     : "border-white/[0.08] hover:border-[#B9D986]/40"
@@ -273,8 +281,8 @@ function Page() {
                     }}
                   />
                   {t.highlight && (
-                    <span className="absolute top-3.5 left-3.5 inline-flex items-center gap-1.5 rounded-full bg-[#B9D986]/95 px-2.5 py-1 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-[#0A0B0D]">
-                      <span className="h-1 w-1 rounded-full bg-[#0A0B0D]" /> Más elegido
+                    <span className="absolute top-3.5 left-3.5 inline-flex items-center gap-1.5 rounded-full bg-[#B9D986]/95 px-2.5 py-1 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-surface-raised">
+                      <span className="h-1 w-1 rounded-full bg-surface-raised" /> Más elegido
                     </span>
                   )}
                 </div>
@@ -298,16 +306,16 @@ function Page() {
                     </a>
                   </div>
                 </div>
-              </article>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* CONTACTO DIRECTO */}
-      <section className="bg-[#050606] py-20 md:py-24 border-b border-white/[0.06]">
+      <section className="bg-surface py-20 md:py-24 border-b border-white/[0.06]">
         <div className="container-fortux grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16">
-          <div className="relative overflow-hidden bg-[#050606]">
+          <Reveal className="relative overflow-hidden bg-surface">
             <img
               src={teamImg.url}
               alt="Marc Fortuny y Gerard Rubio — instructores Fortux"
@@ -328,8 +336,8 @@ function Page() {
                   "linear-gradient(180deg, rgba(5,6,6,0.28) 0%, transparent 12%, transparent 82%, rgba(5,6,6,0.55) 100%), linear-gradient(90deg, rgba(5,6,6,0.32) 0%, transparent 10%, transparent 90%, rgba(5,6,6,0.32) 100%)",
               }}
             />
-          </div>
-          <div>
+          </Reveal>
+          <Reveal delay={100}>
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Contacto directo
             </span>
@@ -347,7 +355,7 @@ function Page() {
                 <a
                   key={p.name}
                   href={`tel:+34${p.phone.replace(/\s/g, "")}`}
-                  className="group flex items-center gap-4 rounded-[10px] border border-white/[0.08] bg-[#0B0D0E] p-5 transition-colors duration-300 hover:border-white/[0.2] hover:bg-[#0F1112]"
+                  className="group flex items-center gap-4 rounded-[10px] border border-white/[0.08] bg-surface-card p-5 transition-colors duration-300 hover:border-white/[0.2] hover:bg-[#0F1112]"
                 >
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[#B9D986]/30 bg-[#B9D986]/[0.08] text-[#B9D986]">
                     <Phone className="h-4 w-4" />
@@ -361,13 +369,13 @@ function Page() {
                 </a>
               ))}
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* FORM */}
-      <section id="contacto" className="bg-[#050606] py-20 md:py-24 border-b border-white/[0.06]">
-        <div className="container-fortux max-w-3xl">
+      <section id="contacto" className="bg-surface py-20 md:py-24 border-b border-white/[0.06]">
+        <Reveal className="container-fortux max-w-3xl">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Contacto
@@ -381,7 +389,7 @@ function Page() {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="mt-10 space-y-5 rounded-[14px] border border-white/[0.08] bg-[#0A0B0D] p-6 md:p-8"
+            className="mt-10 space-y-5 rounded-[14px] border border-white/[0.08] bg-surface-raised p-6 md:p-8"
           >
             <div className="grid gap-5 md:grid-cols-2">
               <div>
@@ -393,7 +401,7 @@ function Page() {
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="mt-2 border-white/10 bg-[#0B0D0E] text-[#F4F5F0] placeholder:text-white/30"
+                  className="mt-2 border-white/10 bg-surface-card text-[#F4F5F0] placeholder:text-white/30"
                 />
               </div>
               <div>
@@ -406,7 +414,7 @@ function Page() {
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="mt-2 border-white/10 bg-[#0B0D0E] text-[#F4F5F0] placeholder:text-white/30"
+                  className="mt-2 border-white/10 bg-surface-card text-[#F4F5F0] placeholder:text-white/30"
                 />
               </div>
             </div>
@@ -420,7 +428,7 @@ function Page() {
                 required
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="mt-2 border-white/10 bg-[#0B0D0E] text-[#F4F5F0] placeholder:text-white/30"
+                className="mt-2 border-white/10 bg-surface-card text-[#F4F5F0] placeholder:text-white/30"
               />
             </div>
             <div>
@@ -433,7 +441,7 @@ function Page() {
                 rows={5}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="mt-2 border-white/10 bg-[#0B0D0E] text-[#F4F5F0] placeholder:text-white/30"
+                className="mt-2 border-white/10 bg-surface-card text-[#F4F5F0] placeholder:text-white/30"
               />
             </div>
             <div className="flex items-start gap-3">
@@ -459,18 +467,18 @@ function Page() {
               type="submit"
               size="lg"
               disabled={sending}
-              className="w-full bg-[#B9D986] text-[#0A0B0D] hover:bg-[#cbe69b]"
+              className="w-full bg-[#B9D986] text-surface-raised hover:bg-[#cbe69b]"
             >
               {sending ? "Enviando…" : "ENVIAR CONSULTA"}
             </Button>
           </form>
-        </div>
+        </Reveal>
       </section>
 
       {/* ALUMNOS */}
-      <section className="bg-[#050606] py-20 md:py-24 border-b border-white/[0.06]">
+      <section className="bg-surface py-20 md:py-24 border-b border-white/[0.06]">
         <div className="container-fortux">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Comunidad
             </span>
@@ -480,12 +488,12 @@ function Page() {
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/64">
               Clases reales, progresos reales y una manera cercana de aprender golf.
             </p>
-          </div>
-          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          </Reveal>
+          <Reveal delay={100} className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {STUDENTS.map((src, i) => (
               <div
                 key={src}
-                className={`group overflow-hidden rounded-[10px] border border-white/[0.08] bg-[#0B0D0E] transition-colors duration-300 hover:border-white/[0.18] ${
+                className={`group overflow-hidden rounded-[10px] border border-white/[0.08] bg-surface-card transition-colors duration-300 hover:border-white/[0.18] ${
                   i === 9 ? "col-span-2 sm:col-span-1" : ""
                 }`}
               >
@@ -498,14 +506,14 @@ function Page() {
                 />
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* CAMPOS */}
-      <section className="bg-[#050606] py-20 md:py-24 border-b border-white/[0.06]">
+      <section className="bg-surface py-20 md:py-24 border-b border-white/[0.06]">
         <div className="container-fortux">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Red de campos
             </span>
@@ -515,8 +523,8 @@ function Page() {
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/64">
               Damos clase en una red de campos seleccionados en toda Cataluña.
             </p>
-          </div>
-          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          </Reveal>
+          <Reveal delay={100} className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {COURSES.map((c) => (
               <div
                 key={c.name}
@@ -531,14 +539,14 @@ function Page() {
                 />
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="bg-[#050606] py-16 md:py-20">
+      <section className="bg-surface py-16 md:py-20">
         <div className="container-fortux max-w-4xl">
-          <div className="rounded-[14px] border border-white/[0.10] bg-[#0A0B0D] p-10 md:p-14 text-center">
+          <Reveal className="rounded-[14px] border border-white/[0.10] bg-surface-raised p-10 md:p-14 text-center">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Empieza hoy
             </span>
@@ -549,7 +557,7 @@ function Page() {
               Reserva tu primera clase y descubre por qué nuestros alumnos confían en Fortux Golf.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" className="bg-[#B9D986] text-[#0A0B0D] hover:bg-[#cbe69b]">
+              <Button asChild size="lg" className="bg-[#B9D986] text-surface-raised hover:bg-[#cbe69b]">
                 <a href="#contacto">Reservar ahora</a>
               </Button>
               <Button
@@ -563,7 +571,7 @@ function Page() {
                 </a>
               </Button>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

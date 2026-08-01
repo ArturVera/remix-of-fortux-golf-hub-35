@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { ArrowRight, Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { waLink } from "@/lib/site";
+import { Reveal } from "@/components/site/Reveal";
+import { useParallax } from "@/hooks/useParallax";
 
 export function ServiceHero({
   eyebrow = "Servicios técnicos",
@@ -22,26 +24,27 @@ export function ServiceHero({
   ctaMsg?: string;
   compact?: boolean;
 }) {
+  const parallaxRef = useParallax<HTMLImageElement>(28);
   return (
-    <section className="relative overflow-hidden bg-[#050606]">
+    <section className="relative overflow-hidden bg-surface">
       <img
+        ref={parallaxRef}
         src={image}
         alt={imageAlt}
         style={{
           position: "absolute",
-          top: 0,
+          top: -40,
           right: 0,
-          bottom: 0,
+          bottom: -40,
           width: "58vw",
-          height: "100%",
           objectFit: "cover",
           objectPosition: "center right",
           zIndex: 0,
         }}
       />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#141619] via-[#0A0B0D] via-[#050607] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[55%] bg-gradient-to-r from-[#0A0B0D] via-[#0A0B0D]/80 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-[#050606]/45 via-transparent to-[#050606]/35" />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-surface-edge via-surface-raised via-surface-deep to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[55%] bg-gradient-to-r from-surface-raised via-surface-raised/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-surface/45 via-transparent to-surface/35" />
 
       <div
         className={
@@ -50,7 +53,7 @@ export function ServiceHero({
             : "container-fortux relative z-[2] py-20 md:py-28 lg:py-32"
         }
       >
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <span className="inline-block text-[12px] font-medium uppercase tracking-[0.22em] text-secondary">
             {eyebrow}
           </span>
@@ -77,7 +80,7 @@ export function ServiceHero({
               href={waLink(ctaMsg)}
               target="_blank"
               rel="noopener"
-              className="inline-flex h-11 items-center gap-2 rounded-[6px] bg-[#B9D986] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-[#050606] transition-colors hover:bg-[#c5e294]"
+              className="inline-flex h-11 items-center gap-2 rounded-[6px] bg-[#B9D986] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-surface transition-colors hover:bg-[#c5e294]"
             >
               {cta} <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </a>
@@ -88,7 +91,7 @@ export function ServiceHero({
               <Phone className="h-4 w-4" strokeWidth={1.75} /> 635 112 656
             </a>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -114,7 +117,7 @@ export function ServiceMedia({
           ? "aspect-square"
           : "aspect-[16/9]";
   return (
-    <figure className="my-8 overflow-hidden rounded-[10px] border border-white/[0.08] bg-[#0A0B0D]">
+    <figure className="my-8 overflow-hidden rounded-[10px] border border-white/[0.08] bg-surface-raised">
       <div className={`relative ${aspect} overflow-hidden`}>
         <img
           src={src}
@@ -122,7 +125,7 @@ export function ServiceMedia({
           loading="lazy"
           className="h-full w-full object-cover"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050606]/40 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/40 via-transparent to-transparent" />
       </div>
       {caption && (
         <figcaption className="px-5 py-3 text-[11px] font-medium uppercase tracking-[0.18em] text-primary-foreground/55">
@@ -148,11 +151,11 @@ export function ServiceSection({
     <section
       className={
         tone === "alt"
-          ? "border-y border-white/[0.06] bg-[#0A0B0D] py-20 md:py-24"
-          : "bg-[#050606] py-20 md:py-24"
+          ? "border-y border-white/[0.06] bg-surface-raised py-20 md:py-24"
+          : "bg-surface py-20 md:py-24"
       }
     >
-      <div className="container-fortux max-w-5xl">
+      <Reveal className="container-fortux max-w-5xl">
         {eyebrow && (
           <span className="inline-block text-[11px] font-medium uppercase tracking-[0.22em] text-secondary">
             {eyebrow}
@@ -164,7 +167,7 @@ export function ServiceSection({
           </h2>
         )}
         <div className={title || eyebrow ? "mt-8" : ""}>{children}</div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -211,9 +214,9 @@ export function ServiceFinalCTA({
   msg?: string;
 }) {
   return (
-    <section className="bg-[#050606] py-20">
+    <section className="bg-surface py-20">
       <div className="container-fortux">
-        <div className="relative overflow-hidden rounded-[10px] border border-white/[0.08] bg-[#0A0B0D] p-10 md:p-14 text-center">
+        <Reveal className="relative overflow-hidden rounded-[10px] border border-white/[0.08] bg-surface-raised p-10 md:p-14 text-center">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_0%,rgba(185,217,134,0.05),transparent_60%)]" />
           <div className="relative">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground text-balance">
@@ -229,7 +232,7 @@ export function ServiceFinalCTA({
                 href={waLink(msg)}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex h-11 items-center gap-2 rounded-[6px] bg-[#B9D986] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-[#050606] transition-colors hover:bg-[#c5e294]"
+                className="inline-flex h-11 items-center gap-2 rounded-[6px] bg-[#B9D986] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-surface transition-colors hover:bg-[#c5e294]"
               >
                 WhatsApp <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
               </a>
@@ -241,7 +244,7 @@ export function ServiceFinalCTA({
               </a>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

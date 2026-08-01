@@ -52,7 +52,7 @@ const PROCESS = [
 
 function Page() {
   return (
-    <div className="bg-[#050606] text-primary-foreground">
+    <div className="bg-surface text-primary-foreground">
       <ServiceHero
         title="Reemplazo del grip"
         description="Recupera el control, la sensación y la comodidad de tus palos con un reemplazo de grips profesional, rápido y adaptado a tu juego."

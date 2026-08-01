@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { Reveal } from "@/components/site/Reveal";
 
 export const Route = createFileRoute("/galeria")({
   head: () => ({
@@ -64,13 +65,13 @@ function Page() {
           <p className="mt-10 text-muted-foreground">{t("gal.loading")}</p>
         ) : (
           <div className="mt-10 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {list.map((m) => (
-              <div key={m.id} className="aspect-square rounded-xl bg-gradient-hero relative overflow-hidden group">
+            {list.map((m, i) => (
+              <Reveal key={m.id} delay={Math.min(i, 7) * 50} className="aspect-square rounded-xl bg-gradient-hero relative overflow-hidden group">
                 <img src={m.url} alt={m.title ?? "Fortux"} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity grid place-items-end p-3">
                   <span className="text-primary-foreground text-xs font-semibold">{m.category}</span>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         )}

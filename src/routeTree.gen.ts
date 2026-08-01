@@ -9,70 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TiendaRouteImport } from './routes/tienda'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ServiciosRouteImport } from './routes/servicios'
-import { Route as NoticiasRouteImport } from './routes/noticias'
-import { Route as GaleriaRouteImport } from './routes/galeria'
-import { Route as ContactoRouteImport } from './routes/contacto'
-import { Route as CircuitoRouteImport } from './routes/circuito'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AcademiaRouteImport } from './routes/academia'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ServiciosIndexRouteImport } from './routes/servicios.index'
-import { Route as ServiciosSwingWeightRouteImport } from './routes/servicios.swing-weight'
-import { Route as ServiciosReemplazoDelGripRouteImport } from './routes/servicios.reemplazo-del-grip'
-import { Route as ServiciosLieLoftRouteImport } from './routes/servicios.lie-loft'
-import { Route as ServiciosAjustesDeVarillasRouteImport } from './routes/servicios.ajustes-de-varillas'
-import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AcademiaRouteImport } from './routes/academia'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CircuitoRouteImport } from './routes/circuito'
+import { Route as ContactoRouteImport } from './routes/contacto'
+import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as NoticiasRouteImport } from './routes/noticias'
+import { Route as ServiciosRouteImport } from './routes/servicios'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TiendaRouteImport } from './routes/tienda'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as ServiciosIndexRouteImport } from './routes/servicios.index'
+import { Route as ServiciosAjustesDeVarillasRouteImport } from './routes/servicios.ajustes-de-varillas'
+import { Route as ServiciosLieLoftRouteImport } from './routes/servicios.lie-loft'
+import { Route as ServiciosReemplazoDelGripRouteImport } from './routes/servicios.reemplazo-del-grip'
+import { Route as ServiciosSwingWeightRouteImport } from './routes/servicios.swing-weight'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
-import { Route as AuthenticatedAdminResenasRouteImport } from './routes/_authenticated/admin.resenas'
-import { Route as AuthenticatedAdminProductosRouteImport } from './routes/_authenticated/admin.productos'
-import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
-import { Route as AuthenticatedAdminGaleriaRouteImport } from './routes/_authenticated/admin.galeria'
 import { Route as AuthenticatedAdminCambiarContrasenaRouteImport } from './routes/_authenticated/admin.cambiar-contrasena'
+import { Route as AuthenticatedAdminGaleriaRouteImport } from './routes/_authenticated/admin.galeria'
+import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
+import { Route as AuthenticatedAdminProductosRouteImport } from './routes/_authenticated/admin.productos'
+import { Route as AuthenticatedAdminResenasRouteImport } from './routes/_authenticated/admin.resenas'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 
-const TiendaRoute = TiendaRouteImport.update({
-  id: '/tienda',
-  path: '/tienda',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServiciosRoute = ServiciosRouteImport.update({
-  id: '/servicios',
-  path: '/servicios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NoticiasRoute = NoticiasRouteImport.update({
-  id: '/noticias',
-  path: '/noticias',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GaleriaRoute = GaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactoRoute = ContactoRouteImport.update({
-  id: '/contacto',
-  path: '/contacto',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CircuitoRoute = CircuitoRouteImport.update({
-  id: '/circuito',
-  path: '/circuito',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcademiaRoute = AcademiaRouteImport.update({
@@ -80,34 +49,59 @@ const AcademiaRoute = AcademiaRouteImport.update({
   path: '/academia',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CircuitoRoute = CircuitoRouteImport.update({
+  id: '/circuito',
+  path: '/circuito',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ContactoRoute = ContactoRouteImport.update({
+  id: '/contacto',
+  path: '/contacto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasRoute = NoticiasRouteImport.update({
+  id: '/noticias',
+  path: '/noticias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiciosRoute = ServiciosRouteImport.update({
+  id: '/servicios',
+  path: '/servicios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TiendaRoute = TiendaRouteImport.update({
+  id: '/tienda',
+  path: '/tienda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NoticiasRoute,
 } as any)
 const ServiciosIndexRoute = ServiciosIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ServiciosRoute,
-} as any)
-const ServiciosSwingWeightRoute = ServiciosSwingWeightRouteImport.update({
-  id: '/swing-weight',
-  path: '/swing-weight',
-  getParentRoute: () => ServiciosRoute,
-} as any)
-const ServiciosReemplazoDelGripRoute =
-  ServiciosReemplazoDelGripRouteImport.update({
-    id: '/reemplazo-del-grip',
-    path: '/reemplazo-del-grip',
-    getParentRoute: () => ServiciosRoute,
-  } as any)
-const ServiciosLieLoftRoute = ServiciosLieLoftRouteImport.update({
-  id: '/lie-loft',
-  path: '/lie-loft',
   getParentRoute: () => ServiciosRoute,
 } as any)
 const ServiciosAjustesDeVarillasRoute =
@@ -116,43 +110,31 @@ const ServiciosAjustesDeVarillasRoute =
     path: '/ajustes-de-varillas',
     getParentRoute: () => ServiciosRoute,
   } as any)
-const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => NoticiasRoute,
+const ServiciosLieLoftRoute = ServiciosLieLoftRouteImport.update({
+  id: '/lie-loft',
+  path: '/lie-loft',
+  getParentRoute: () => ServiciosRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const ServiciosReemplazoDelGripRoute =
+  ServiciosReemplazoDelGripRouteImport.update({
+    id: '/reemplazo-del-grip',
+    path: '/reemplazo-del-grip',
+    getParentRoute: () => ServiciosRoute,
+  } as any)
+const ServiciosSwingWeightRoute = ServiciosSwingWeightRouteImport.update({
+  id: '/swing-weight',
+  path: '/swing-weight',
+  getParentRoute: () => ServiciosRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminUsuariosRoute =
-  AuthenticatedAdminUsuariosRouteImport.update({
-    id: '/usuarios',
-    path: '/usuarios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResenasRoute =
-  AuthenticatedAdminResenasRouteImport.update({
-    id: '/resenas',
-    path: '/resenas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminProductosRoute =
-  AuthenticatedAdminProductosRouteImport.update({
-    id: '/productos',
-    path: '/productos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminNoticiasRoute =
-  AuthenticatedAdminNoticiasRouteImport.update({
-    id: '/noticias',
-    path: '/noticias',
+const AuthenticatedAdminCambiarContrasenaRoute =
+  AuthenticatedAdminCambiarContrasenaRouteImport.update({
+    id: '/cambiar-contrasena',
+    path: '/cambiar-contrasena',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminGaleriaRoute =
@@ -161,10 +143,28 @@ const AuthenticatedAdminGaleriaRoute =
     path: '/galeria',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCambiarContrasenaRoute =
-  AuthenticatedAdminCambiarContrasenaRouteImport.update({
-    id: '/cambiar-contrasena',
-    path: '/cambiar-contrasena',
+const AuthenticatedAdminNoticiasRoute =
+  AuthenticatedAdminNoticiasRouteImport.update({
+    id: '/noticias',
+    path: '/noticias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProductosRoute =
+  AuthenticatedAdminProductosRouteImport.update({
+    id: '/productos',
+    path: '/productos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResenasRoute =
+  AuthenticatedAdminResenasRouteImport.update({
+    id: '/resenas',
+    path: '/resenas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
@@ -342,67 +342,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tienda': {
-      id: '/tienda'
-      path: '/tienda'
-      fullPath: '/tienda'
-      preLoaderRoute: typeof TiendaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/servicios': {
-      id: '/servicios'
-      path: '/servicios'
-      fullPath: '/servicios'
-      preLoaderRoute: typeof ServiciosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/noticias': {
-      id: '/noticias'
-      path: '/noticias'
-      fullPath: '/noticias'
-      preLoaderRoute: typeof NoticiasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/galeria': {
-      id: '/galeria'
-      path: '/galeria'
-      fullPath: '/galeria'
-      preLoaderRoute: typeof GaleriaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contacto': {
-      id: '/contacto'
-      path: '/contacto'
-      fullPath: '/contacto'
-      preLoaderRoute: typeof ContactoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/circuito': {
-      id: '/circuito'
-      path: '/circuito'
-      fullPath: '/circuito'
-      preLoaderRoute: typeof CircuitoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/academia': {
-      id: '/academia'
-      path: '/academia'
-      fullPath: '/academia'
-      preLoaderRoute: typeof AcademiaRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -412,39 +356,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/academia': {
+      id: '/academia'
+      path: '/academia'
+      fullPath: '/academia'
+      preLoaderRoute: typeof AcademiaRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/circuito': {
+      id: '/circuito'
+      path: '/circuito'
+      fullPath: '/circuito'
+      preLoaderRoute: typeof CircuitoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacto': {
+      id: '/contacto'
+      path: '/contacto'
+      fullPath: '/contacto'
+      preLoaderRoute: typeof ContactoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticias': {
+      id: '/noticias'
+      path: '/noticias'
+      fullPath: '/noticias'
+      preLoaderRoute: typeof NoticiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicios': {
+      id: '/servicios'
+      path: '/servicios'
+      fullPath: '/servicios'
+      preLoaderRoute: typeof ServiciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tienda': {
+      id: '/tienda'
+      path: '/tienda'
+      fullPath: '/tienda'
+      preLoaderRoute: typeof TiendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/noticias/$slug': {
+      id: '/noticias/$slug'
+      path: '/$slug'
+      fullPath: '/noticias/$slug'
+      preLoaderRoute: typeof NoticiasSlugRouteImport
+      parentRoute: typeof NoticiasRoute
     }
     '/servicios/': {
       id: '/servicios/'
       path: '/'
       fullPath: '/servicios/'
       preLoaderRoute: typeof ServiciosIndexRouteImport
-      parentRoute: typeof ServiciosRoute
-    }
-    '/servicios/swing-weight': {
-      id: '/servicios/swing-weight'
-      path: '/swing-weight'
-      fullPath: '/servicios/swing-weight'
-      preLoaderRoute: typeof ServiciosSwingWeightRouteImport
-      parentRoute: typeof ServiciosRoute
-    }
-    '/servicios/reemplazo-del-grip': {
-      id: '/servicios/reemplazo-del-grip'
-      path: '/reemplazo-del-grip'
-      fullPath: '/servicios/reemplazo-del-grip'
-      preLoaderRoute: typeof ServiciosReemplazoDelGripRouteImport
-      parentRoute: typeof ServiciosRoute
-    }
-    '/servicios/lie-loft': {
-      id: '/servicios/lie-loft'
-      path: '/lie-loft'
-      fullPath: '/servicios/lie-loft'
-      preLoaderRoute: typeof ServiciosLieLoftRouteImport
       parentRoute: typeof ServiciosRoute
     }
     '/servicios/ajustes-de-varillas': {
@@ -454,19 +447,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServiciosAjustesDeVarillasRouteImport
       parentRoute: typeof ServiciosRoute
     }
-    '/noticias/$slug': {
-      id: '/noticias/$slug'
-      path: '/$slug'
-      fullPath: '/noticias/$slug'
-      preLoaderRoute: typeof NoticiasSlugRouteImport
-      parentRoute: typeof NoticiasRoute
+    '/servicios/lie-loft': {
+      id: '/servicios/lie-loft'
+      path: '/lie-loft'
+      fullPath: '/servicios/lie-loft'
+      preLoaderRoute: typeof ServiciosLieLoftRouteImport
+      parentRoute: typeof ServiciosRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/servicios/reemplazo-del-grip': {
+      id: '/servicios/reemplazo-del-grip'
+      path: '/reemplazo-del-grip'
+      fullPath: '/servicios/reemplazo-del-grip'
+      preLoaderRoute: typeof ServiciosReemplazoDelGripRouteImport
+      parentRoute: typeof ServiciosRoute
+    }
+    '/servicios/swing-weight': {
+      id: '/servicios/swing-weight'
+      path: '/swing-weight'
+      fullPath: '/servicios/swing-weight'
+      preLoaderRoute: typeof ServiciosSwingWeightRouteImport
+      parentRoute: typeof ServiciosRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -475,32 +475,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/usuarios': {
-      id: '/_authenticated/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resenas': {
-      id: '/_authenticated/admin/resenas'
-      path: '/resenas'
-      fullPath: '/admin/resenas'
-      preLoaderRoute: typeof AuthenticatedAdminResenasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/productos': {
-      id: '/_authenticated/admin/productos'
-      path: '/productos'
-      fullPath: '/admin/productos'
-      preLoaderRoute: typeof AuthenticatedAdminProductosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/noticias': {
-      id: '/_authenticated/admin/noticias'
-      path: '/noticias'
-      fullPath: '/admin/noticias'
-      preLoaderRoute: typeof AuthenticatedAdminNoticiasRouteImport
+    '/_authenticated/admin/cambiar-contrasena': {
+      id: '/_authenticated/admin/cambiar-contrasena'
+      path: '/cambiar-contrasena'
+      fullPath: '/admin/cambiar-contrasena'
+      preLoaderRoute: typeof AuthenticatedAdminCambiarContrasenaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/galeria': {
@@ -510,11 +489,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGaleriaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/cambiar-contrasena': {
-      id: '/_authenticated/admin/cambiar-contrasena'
-      path: '/cambiar-contrasena'
-      fullPath: '/admin/cambiar-contrasena'
-      preLoaderRoute: typeof AuthenticatedAdminCambiarContrasenaRouteImport
+    '/_authenticated/admin/noticias': {
+      id: '/_authenticated/admin/noticias'
+      path: '/noticias'
+      fullPath: '/admin/noticias'
+      preLoaderRoute: typeof AuthenticatedAdminNoticiasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/productos': {
+      id: '/_authenticated/admin/productos'
+      path: '/productos'
+      fullPath: '/admin/productos'
+      preLoaderRoute: typeof AuthenticatedAdminProductosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resenas': {
+      id: '/_authenticated/admin/resenas'
+      path: '/resenas'
+      fullPath: '/admin/resenas'
+      preLoaderRoute: typeof AuthenticatedAdminResenasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
   }

@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { MessageCircle, Phone, X, ZoomIn, ArrowRight } from "lucide-react";
 import { waLink, SITE } from "@/lib/site";
+import { Reveal } from "@/components/site/Reveal";
+import { useParallax } from "@/hooks/useParallax";
 import gripTextureDark from "@/assets/grips/grip-texture-dark.jpg";
 import gripHeroMacro from "@/assets/grips/grip-hero-macro.jpg";
 
@@ -158,9 +160,11 @@ function ProductGrid({ items, onImageClick }: { items: { name: string; price: st
   return (
     <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((p, i) => (
-        <article
+        <Reveal
+          as="article"
           key={`${p.name}-${i}`}
-          className="group flex flex-col overflow-hidden rounded-[10px] border border-white/10 bg-[#0B0D0E] transition-colors duration-300 hover:border-[#B9D986]/70"
+          delay={Math.min(i, 7) * 50}
+          className="group flex flex-col overflow-hidden rounded-[10px] border border-white/10 bg-surface-card transition-colors duration-300 hover:border-[#B9D986]/70"
         >
           <button
             onClick={() => onImageClick(p.img, p.name)}
@@ -175,7 +179,7 @@ function ProductGrid({ items, onImageClick }: { items: { name: string; price: st
             />
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/5" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/10">
-              <ZoomIn className="h-7 w-7 text-[#050606] opacity-0 transition-opacity group-hover:opacity-80" />
+              <ZoomIn className="h-7 w-7 text-surface opacity-0 transition-opacity group-hover:opacity-80" />
             </div>
           </button>
           <div className="flex flex-1 flex-col justify-between gap-4 p-5">
@@ -190,13 +194,13 @@ function ProductGrid({ items, onImageClick }: { items: { name: string; price: st
                 href={waLink(`Hola, querría información del grip: ${p.name} (${p.price}).`)}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#B9D986] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#B9D986] transition-colors hover:bg-[#B9D986] hover:text-[#050606]"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[#B9D986] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#B9D986] transition-colors hover:bg-[#B9D986] hover:text-surface"
               >
                 <MessageCircle className="h-3.5 w-3.5" /> Pedir info
               </a>
             </div>
           </div>
-        </article>
+        </Reveal>
       ))}
     </div>
   );
@@ -255,17 +259,21 @@ function ImageModal({
 function Page() {
   const [tab, setTab] = useState<TabId>("iron");
   const [selectedImage, setSelectedImage] = useState<{ img: string; name: string } | null>(null);
+  const heroParallaxRef = useParallax<HTMLDivElement>(28);
 
   const items = tab === "iron" ? IRONS : PUTTERS;
 
   return (
     <>
       {/* HERO — compact dark premium */}
-      <section className="relative isolate overflow-hidden bg-[#050606] border-b border-white/[0.06]">
+      <section className="relative isolate overflow-hidden bg-surface border-b border-white/[0.06]">
         <div
+          ref={heroParallaxRef}
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-[62%]"
+          className="pointer-events-none absolute right-0 w-[62%]"
           style={{
+            top: -40,
+            bottom: -40,
             backgroundImage: `url(${gripHeroMacro})`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
@@ -281,7 +289,7 @@ function Page() {
           className="pointer-events-none absolute -right-40 top-1/2 -translate-y-1/2 h-[520px] w-[520px] rounded-full"
           style={{ background: "radial-gradient(closest-side, rgba(185,217,134,0.08), transparent 70%)" }}
         />
-        <div className="container-fortux relative py-14 md:py-16">
+        <Reveal className="container-fortux relative py-14 md:py-16">
           <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
             <span className="h-px w-6 bg-[#B9D986]" /> Catálogo Fortux
           </span>
@@ -294,7 +302,7 @@ function Page() {
           <div className="mt-7 flex flex-wrap gap-3">
             <a
               href="#catalogo"
-              className="inline-flex items-center gap-2 rounded-md bg-[#B9D986] px-5 py-2.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#050606] transition-colors hover:bg-[#cce69b]"
+              className="inline-flex items-center gap-2 rounded-md bg-[#B9D986] px-5 py-2.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-surface transition-colors hover:bg-[#cce69b]"
             >
               Ver catálogo <ArrowRight className="h-3.5 w-3.5" />
             </a>
@@ -305,13 +313,13 @@ function Page() {
               Pedir asesoramiento
             </a>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* CATALOG */}
-      <section id="catalogo" className="bg-[#050606] py-16 md:py-20">
+      <section id="catalogo" className="bg-surface py-16 md:py-20">
         <div className="container-fortux">
-          <div className="text-center">
+          <Reveal className="text-center">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" />
               {tab === "iron" ? "Hierro y madera" : "Putters"}
@@ -323,10 +331,10 @@ function Page() {
             <p className="mt-3 text-sm md:text-base text-white/60">
               La mano de obra está incluida en el precio.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-9 flex justify-center">
-            <div className="inline-flex rounded-[8px] border border-white/[0.12] bg-[#0B0D0E] p-1">
+            <div className="inline-flex rounded-[8px] border border-white/[0.12] bg-surface-card p-1">
               {TABS.map((t) => {
                 const active = tab === t.id;
                 return (
@@ -335,12 +343,12 @@ function Page() {
                     onClick={() => setTab(t.id)}
                     className={`rounded-[6px] px-5 py-2 text-[11.5px] font-semibold uppercase tracking-[0.16em] transition-colors ${
                       active
-                        ? "bg-[#B9D986] text-[#050606]"
+                        ? "bg-[#B9D986] text-surface"
                         : "text-white/65 hover:text-[#F4F5F0]"
                     }`}
                   >
                     {t.label}
-                    <span className={`ml-2 text-[10px] ${active ? "text-[#050606]/70" : "text-white/40"}`}>
+                    <span className={`ml-2 text-[10px] ${active ? "text-surface/70" : "text-white/40"}`}>
                       {t.count}
                     </span>
                   </button>
@@ -356,7 +364,7 @@ function Page() {
       {/* MARCAS */}
       <section className="relative border-t border-white/[0.06] bg-[#070808] py-16 md:py-20">
         <div className="container-fortux">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-[#B9D986]">
               <span className="h-px w-6 bg-[#B9D986]" /> Partners
             </span>
@@ -366,7 +374,7 @@ function Page() {
             <p className="mt-5 max-w-md text-[14.5px] leading-relaxed text-white/55">
               Trabajamos con las principales firmas del mercado para ofrecer el grip adecuado para cada jugador y cada estilo de juego.
             </p>
-          </div>
+          </Reveal>
 
           <div
             className="relative mt-12 md:mt-14"
@@ -395,9 +403,9 @@ function Page() {
       </section>
 
       {/* FINAL CTA */}
-      <section id="contacto" className="bg-[#050606] py-16 md:py-20">
+      <section id="contacto" className="bg-surface py-16 md:py-20">
         <div className="container-fortux max-w-4xl">
-          <div className="relative isolate overflow-hidden rounded-2xl border border-white/[0.10] bg-[#0A0B0D]">
+          <Reveal className="relative isolate overflow-hidden rounded-2xl border border-white/[0.10] bg-surface-raised">
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0 opacity-[0.12]"
@@ -434,7 +442,7 @@ function Page() {
                   )}
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center gap-2 rounded-md bg-[#B9D986] px-6 py-3 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#050606] transition-colors hover:bg-[#cce69b]"
+                  className="inline-flex items-center gap-2 rounded-md bg-[#B9D986] px-6 py-3 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-surface transition-colors hover:bg-[#cce69b]"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Pedir asesoramiento
@@ -448,7 +456,7 @@ function Page() {
                 </a>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 

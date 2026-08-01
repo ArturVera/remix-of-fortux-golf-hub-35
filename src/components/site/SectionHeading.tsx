@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Reveal } from "@/components/site/Reveal";
 
 export function SectionHeading({
   eyebrow,
@@ -12,7 +13,7 @@ export function SectionHeading({
   align?: "left" | "center";
 }) {
   return (
-    <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
+    <Reveal className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       {eyebrow && (
         <span className="inline-block rounded-full bg-secondary/40 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
           {eyebrow}
@@ -22,6 +23,6 @@ export function SectionHeading({
         {title}
       </h2>
       {subtitle && <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">{subtitle}</p>}
-    </div>
+    </Reveal>
   );
 }

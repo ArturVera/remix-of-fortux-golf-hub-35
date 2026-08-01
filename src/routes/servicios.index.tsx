@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { ServiceHero } from "@/components/site/ServiceShell";
+import { Reveal } from "@/components/site/Reveal";
 import gripsImg from "@/assets/servicios-v2/03-grips.jpg.asset.json";
 import varillasImg from "@/assets/servicios-v2/01-reparacion.jpg.asset.json";
 import swingWeightImg from "@/assets/servicios-v2/02-mantenimiento.jpg.asset.json";
@@ -50,7 +51,7 @@ const SERVICES = [
 
 function Page() {
   return (
-    <div className="bg-[#050606] text-primary-foreground">
+    <div className="bg-surface text-primary-foreground">
       <ServiceHero
         eyebrow="Servicios"
         title="Servicios técnicos para cuidar tu equipo"
@@ -61,8 +62,8 @@ function Page() {
       />
 
       {/* SERVICE INDEX */}
-      <section className="border-t border-white/[0.06] bg-[#050606]">
-        <div className="container-fortux grid grid-cols-2 gap-y-4 py-6 md:grid-cols-4 md:py-7">
+      <section className="border-t border-white/[0.06] bg-surface">
+        <Reveal as="div" className="container-fortux grid grid-cols-2 gap-y-4 py-6 md:grid-cols-4 md:py-7">
           {SERVICES.map((s) => (
             <Link
               key={s.n}
@@ -77,16 +78,16 @@ function Page() {
               </span>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* SERVICE GRID */}
-      <section className="bg-[#050606] py-10 md:py-14">
+      <section className="bg-surface py-10 md:py-14">
         <div className="container-fortux">
           <div className="grid gap-5 sm:grid-cols-2">
-            {SERVICES.map((s) => (
+            {SERVICES.map((s, i) => (
+              <Reveal key={s.to} delay={i * 80}>
               <Link
-                key={s.to}
                 to={s.to}
                 className="group relative flex flex-col overflow-hidden rounded-[10px] border border-white/10 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 hover:border-secondary/60 hover:bg-white/[0.06] hover:shadow-[0_18px_40px_-20px_rgba(185,217,134,0.18)]"
               >
@@ -97,7 +98,7 @@ function Page() {
                     loading="lazy"
                     className="h-full w-full object-cover transition-all duration-500 group-hover:scale-[1.04] group-hover:brightness-110"
                   />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050606] via-[#050606]/30 to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent" />
                 </div>
                 <div className="p-6">
                   <div className="flex items-baseline gap-3">
@@ -117,6 +118,7 @@ function Page() {
                   </span>
                 </div>
               </Link>
+              </Reveal>
             ))}
           </div>
         </div>

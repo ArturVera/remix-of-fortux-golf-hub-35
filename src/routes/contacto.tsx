@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { SITE, waLink } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import contactoHero from "@/assets/contacto-hero.jpg.asset.json";
+import { Reveal } from "@/components/site/Reveal";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -47,9 +48,9 @@ function ContactCard({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener" : undefined}
-      className="group flex items-center gap-4 rounded-[10px] border border-white/10 bg-[#0B0D0E] p-4 transition-colors duration-300 hover:border-[#B9D986]/60"
+      className="group flex items-center gap-4 rounded-[10px] border border-white/10 bg-surface-card p-4 transition-colors duration-300 hover:border-[#B9D986]/60"
     >
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-white/10 bg-[#0B0D0E] text-[#B9D986] transition-colors duration-300 group-hover:border-[#B9D986]/40">
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-white/10 bg-surface-card text-[#B9D986] transition-colors duration-300 group-hover:border-[#B9D986]/40">
         {icon}
       </span>
       <div className="min-w-0">
@@ -75,12 +76,12 @@ function Page() {
   };
 
   return (
-    <div className="relative bg-[#050606]">
+    <div className="relative bg-surface">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-white/[0.06]">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(185,217,134,0.06),transparent_55%)]" />
         <div className="container-fortux relative grid items-center gap-10 py-16 md:py-20 lg:grid-cols-2 lg:gap-12 min-h-[420px] md:min-h-[460px]">
-          <div className="relative z-10">
+          <Reveal className="relative z-10">
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#B9D986]">
               {t("con.eyebrow")}
             </span>
@@ -90,8 +91,8 @@ function Page() {
             <p className="mt-6 max-w-lg text-base leading-relaxed text-[#F4F5F0]/60 md:text-lg">
               {t("con.subtitle")}
             </p>
-          </div>
-          <div className="relative h-[260px] sm:h-[320px] lg:h-[420px]">
+          </Reveal>
+          <Reveal delay={120} className="relative h-[260px] sm:h-[320px] lg:h-[420px]">
             <img
               src={contactoHero.url}
               alt=""
@@ -100,10 +101,10 @@ function Page() {
               className="absolute inset-0 h-full w-full object-cover rounded-lg"
             />
             {/* Fade integration */}
-            <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#050606] via-[#050606]/70 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#050606] to-transparent" />
-            <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[#050606]/80 to-transparent" />
-          </div>
+            <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-surface via-surface/70 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-surface to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-surface/80 to-transparent" />
+          </Reveal>
         </div>
       </section>
 
@@ -111,7 +112,7 @@ function Page() {
       <section className="relative py-16 md:py-24">
         <div className="container-fortux relative">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-            <div className="flex flex-col">
+            <Reveal as="div" className="flex flex-col">
               <div className="space-y-3.5">
               <ContactCard
                 href={waLink()}
@@ -133,9 +134,9 @@ function Page() {
                 desc={t("con.email.desc")}
               />
             </div>
-          </div>
+          </Reveal>
 
-            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0B0D] p-6 md:p-8">
+            <Reveal delay={120} className="relative overflow-hidden rounded-xl border border-white/10 bg-surface-raised p-6 md:p-8">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B9D986]/30 to-transparent" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.04),transparent_60%)]" />
               <div className="relative mb-7 flex items-center gap-3">
@@ -182,12 +183,12 @@ function Page() {
               <button
                 type="submit"
                 disabled={sending}
-                className="h-12 w-full rounded-md bg-[#B9D986] px-5 text-sm font-semibold uppercase tracking-wider text-[#050606] transition-colors duration-300 hover:bg-[#c8e49e] disabled:opacity-60"
+                className="h-12 w-full rounded-md bg-[#B9D986] px-5 text-sm font-semibold uppercase tracking-wider text-surface transition-colors duration-300 hover:bg-[#c8e49e] disabled:opacity-60"
               >
                 {sending ? t("con.form.sending") : t("con.form.send")}
               </button>
               </form>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>

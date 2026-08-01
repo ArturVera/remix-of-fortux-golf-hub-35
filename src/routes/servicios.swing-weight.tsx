@@ -53,7 +53,7 @@ const PROCESS = [
 
 function Page() {
   return (
-    <div className="bg-[#050606] text-primary-foreground">
+    <div className="bg-surface text-primary-foreground">
       <ServiceHero
         title="Swing Weight"
         description="Modificamos el swing weight de tus palos para mejorar el equilibrio, la consistencia y la sensación en cada golpe."

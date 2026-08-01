@@ -1,8 +1,10 @@
 export const SITE = {
   name: "Fortux",
   tagline: "Expertos en reparación, mantenimiento y soluciones para golfistas",
-  whatsapp: "34600000000", // TODO: reemplazar con el número real
-  phone: "+34 600 000 000",
+  whatsapp: "34635112656",
+  phone: "+34 635 112 656",
+  // The van and academia.tsx also list 689 731 369 (Gerard Rubio); 635 112 656
+  // is Marc Fortuny's and is the one used for every WhatsApp CTA on the site.
   email: "info@fortux.com",
   circuitUrl: "https://fortux.fairwaystudio.ai/",
   social: {

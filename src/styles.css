@@ -35,8 +35,25 @@
   --color-whatsapp: var(--whatsapp);
   --color-whatsapp-foreground: var(--whatsapp-foreground);
 
-  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-surface: var(--surface);
+  --color-surface-edge: var(--surface-edge);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-deep: var(--surface-deep);
+  --color-surface-card: var(--surface-card);
+
+  --color-atelier: var(--atelier-bg);
+  --color-atelier-ink: var(--atelier-ink);
+  --color-atelier-muted: var(--atelier-muted);
+  --color-atelier-accent: var(--atelier-accent);
+  --color-atelier-brass: var(--atelier-brass);
+  --color-atelier-line: var(--atelier-line);
+
+  /* Condensed signage register: headings and UI in the narrow cut, running text
+     in the normal width of the same superfamily. No serif anywhere by design. */
+  --font-display: "Barlow Condensed", "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-serif: var(--font-display);
 }
 
 :root {
@@ -77,10 +94,31 @@
   --whatsapp: oklch(0.68 0.17 150);
   --whatsapp-foreground: oklch(0.99 0 0);
 
-  --gradient-hero: linear-gradient(100deg, #111316 0%, #0A0B0D 40%, #050607 70%, #030405 100%);
+  /* Near-black surface scale — every hardcoded dark background/panel
+     literal elsewhere in the app should reference one of these instead
+     of re-typing a hex value. */
+  --surface: #050606;         /* dominant page/section background */
+  --surface-edge: #141619;    /* lit gradient edge (top-left of hero fades) */
+  --surface-raised: #0A0B0D;  /* raised panel / mid gradient stop */
+  --surface-deep: #050607;    /* near-black gradient stop, just past --surface */
+  --surface-card: #0B0D0E;    /* card/input fill */
+
+  /* Atelier — the home page's editorial register: warm ivory instead of
+     near-black, bottle green + brass instead of lime. Scoped to the home
+     page only; the rest of the site still runs on the surface-* scale above. */
+  --atelier-bg: #F7F3EA;      /* ivory ground */
+  --atelier-ink: #241E19;     /* warm near-black text */
+  --atelier-muted: #6B6152;
+  --atelier-accent: #2F4A3B;  /* bottle green */
+  /* Darkened from #8B6A3A, which measured 4.49:1 on ivory — just under the
+     4.5:1 AA floor for the small uppercase labels this colour is used for. */
+  --atelier-brass: #7D5F33;   /* brass / signature accent — 5.33:1 on ivory */
+  --atelier-line: #E1D8C4;    /* hairline border */
+
+  --gradient-hero: linear-gradient(100deg, #111316 0%, var(--surface-raised) 40%, var(--surface-deep) 70%, #030405 100%);
   --gradient-accent: linear-gradient(135deg, oklch(0.87 0.14 128) 0%, oklch(0.80 0.15 130) 100%);
   --gradient-overlay: linear-gradient(180deg, oklch(0.12 0.05 258 / 0.55) 0%, oklch(0.12 0.05 258 / 0.92) 100%);
-  --gradient-first-fold: linear-gradient(100deg, #141619 0%, #0A0B0D 40%, #050607 70%, #020304 100%);
+  --gradient-first-fold: linear-gradient(100deg, var(--surface-edge) 0%, var(--surface-raised) 40%, var(--surface-deep) 70%, #020304 100%);
 
   --shadow-elegant: 0 24px 60px -24px oklch(0.20 0.05 258 / 0.35);
   --shadow-soft: 0 10px 30px -12px oklch(0.20 0.05 258 / 0.15);
@@ -110,15 +148,19 @@
   * { border-color: var(--color-border); }
   html { scroll-behavior: smooth; }
   body {
-    background-color: #050606;
+    /* Navbar and footer bookend every page in the Atelier ivory, so ivory is
+       also the right overscroll colour. */
+    background-color: var(--atelier-bg);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    font-weight: 700;
+    /* Barlow Condensed is already narrow; the negative tracking that suited the
+       previous grotesque closes the counters up too much here. */
+    letter-spacing: 0;
   }
 }
 
@@ -146,4 +188,54 @@
 }
 @utility animate-fade-up {
   animation: fortux-fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Scroll-reveal: toggled by the <Reveal> component via IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Keep the fade, drop the slide — reduced motion means gentler, not absent. */
+  .reveal,
+  .reveal.is-visible {
+    transform: none;
+  }
+}
+
+/* Partner-course logo marquee: constant motion, so linear easing (not ease-out). */
+@keyframes fortux-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: fortux-marquee 36s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Instrument tick-mark rule, used by <MeasureDivider>. */
+.tick-rule {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--secondary) 0,
+    var(--secondary) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  background-position: left center;
+  opacity: 0.35;
 }

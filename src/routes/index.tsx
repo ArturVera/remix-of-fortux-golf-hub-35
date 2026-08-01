@@ -1,19 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { ArrowRight, Star, ChevronDown, ExternalLink, BarChart3, ListChecks, Users, Cpu, MessageSquare, Award, ShieldCheck } from "lucide-react";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
 import { SITE, waLink } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
-import teamPhoto from "@/assets/gerard-marc-v2.png.asset.json";
-import heroImg from "@/assets/hero-fitting-lab.jpg";
-import repairImg from "@/assets/servicios-v2/01-reparacion.jpg.asset.json";
-import varillasImg from "@/assets/servicios-v2/02-mantenimiento.jpg.asset.json";
-import gripsImg from "@/assets/servicios-v2/03-grips.jpg.asset.json";
-import swingWeightImg from "@/assets/servicios-v2/04-fitting.jpg.asset.json";
-import lieLoftImg from "@/assets/servicios-v2/05-personalizacion.jpg.asset.json";
-import academyImg from "@/assets/servicios-v2/06-academy.jpg.asset.json";
+import { Reveal } from "@/components/site/Reveal";
+import { useI18n } from "@/lib/i18n";
+import marcPhoto from "@/assets/retrat-marc.jpg";
+import gerardPhoto from "@/assets/retrat-gerard.jpg";
+import heroImg from "@/assets/hero-taller-grip.jpg";
+import gripAssemblyImg from "@/assets/taller-grip-muntatge.jpg";
+import fortuxMark from "@/assets/brand/fortux-vertical-nobg.png";
+import vanLineArt from "@/assets/fortux-van-lineart.png";
+import mulliganCrest from "@/assets/mulligan-segell.png";
+import fortuxCrest from "@/assets/fortux-segell.png";
+import repairImg from "@/assets/servei-reparacio-wedge.jpg";
+import varillasImg from "@/assets/servei-manteniment-joc.jpg";
+import lieLoftImg from "@/assets/servei-personalitzacio-putter.jpg";
+import academyImg from "@/assets/servei-academia-classe.jpg";
 import cBdalona from "@/assets/campos/bdalona.png.asset.json";
 import cCanCuyas from "@/assets/campos/can-cuyas.png.asset.json";
 import cCanRafel from "@/assets/campos/can-rafel.png.asset.json";
@@ -36,6 +50,8 @@ import cSantCugat from "@/assets/campos/sant-cugat.png.asset.json";
 import cMontseny from "@/assets/campos/montseny.png.asset.json";
 import cElVendrell from "@/assets/campos/el-vendrell.png.asset.json";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 const PARTNER_COURSES = [
   { name: "Badalona", url: cBdalona.url },
   { name: "Can Cuyàs", url: cCanCuyas.url },
@@ -53,7 +69,6 @@ const PARTNER_COURSES = [
   { name: "Roc 3", url: cRoc3.url },
   { name: "Teià", url: cTeia.url },
   { name: "El Vendrell", url: cElVendrell.url },
-
   { name: "Golf Square", url: cGolfSquare.url },
   { name: "Urgell", url: cUrgell.url },
   { name: "BonÀrea", url: cBonarea.url },
@@ -64,10 +79,10 @@ const PARTNER_COURSES = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fortux — Precisión técnica para cuidar tu equipo" },
-      { name: "description", content: "Reparamos, ajustamos y optimizamos tu material de golf con experiencia, asesoramiento y atención personalizada." },
-      { property: "og:title", content: "Fortux — Precisión técnica para cuidar tu equipo" },
-      { property: "og:description", content: "Reparación, mantenimiento, grips, fitting, personalización y academy. Servicios integrales de golf." },
+      { title: "Fortux — El teu equip, ajustat a tu" },
+      { name: "description", content: "Taller de golf a Barcelona. Reparem, ajustem i posem a punt pals de golf: grips, varetes, lie, loft i swing weight. Peça a peça, a mà." },
+      { property: "og:title", content: "Fortux — El teu equip, ajustat a tu" },
+      { property: "og:description", content: "Reparació, manteniment, grips, fitting, personalització i acadèmia. Taller de golf a Barcelona." },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroImg },
       { name: "twitter:image", content: heroImg },
@@ -77,39 +92,28 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const SERVICE_INDEX = [
-  { n: "01", label: "Reparación" },
-  { n: "02", label: "Mantenimiento" },
-  { n: "03", label: "Grips" },
-  { n: "04", label: "Fitting" },
-  { n: "05", label: "Personalización" },
-  { n: "06", label: "Academy" },
-];
-
+/* Copy lives in the i18n dictionaries (ca + es); these tables hold only the
+   lookup keys and the things that are not language-dependent. */
 const SERVICES = [
-  { title: "Reparación de palos", desc: "Devolvemos rendimiento y fiabilidad a tu material.", img: repairImg.url, to: "/servicios/reemplazo-del-grip" as const },
-  { title: "Mantenimiento completo", desc: "Revisión, ajuste y puesta a punto profesional.", img: varillasImg.url, to: "/servicios/ajustes-de-varillas" as const },
-  { title: "Grips premium", desc: "Mejora el agarre, el control y la confianza en cada golpe.", img: gripsImg.url, to: "/tienda" as const },
-  { title: "Fitting personalizado", desc: "Ajustes técnicos según tu juego y tus necesidades.", img: swingWeightImg.url, to: "/servicios/swing-weight" as const },
-  { title: "Personalización de palos", desc: "Adaptamos tu material a tu estilo de juego.", img: lieLoftImg.url, to: "/servicios/lie-loft" as const },
-  { title: "Academy y clases", desc: "Mejora tu técnica con nuestros profesionales.", img: academyImg.url, to: "/academia" as const },
+  { k: "s1", img: repairImg, to: "/servicios/reemplazo-del-grip" as const },
+  { k: "s2", img: varillasImg, to: "/servicios/ajustes-de-varillas" as const },
+  { k: "s3", img: heroImg, to: "/tienda" as const },
+  { k: "s4", img: gripAssemblyImg, to: "/servicios/swing-weight" as const },
+  { k: "s5", img: lieLoftImg, to: "/servicios/lie-loft" as const },
+  { k: "s6", img: academyImg, to: "/academia" as const },
 ];
 
-const PROCESS = [
-  { n: "1", title: "Revisamos", desc: "Analizamos tu equipo y entendemos tus necesidades." },
-  { n: "2", title: "Asesoramos", desc: "Te recomendamos las mejores soluciones para tu juego." },
-  { n: "3", title: "Ajustamos", desc: "Realizamos los ajustes y reparaciones con precisión y materiales premium." },
-  { n: "4", title: "Entregamos listo para jugar", desc: "Probamos y validamos para que juegues con total confianza." },
-];
+const PROCESS = ["p1", "p2", "p3", "p4"];
 
 const VALUES = [
-  { icon: Cpu, title: "Tecnología", desc: "Equipamiento avanzado para resultados precisos." },
-  { icon: MessageSquare, title: "Asesoramiento", desc: "Te guiamos para que tomes las mejores decisiones." },
-  { icon: Award, title: "Experiencia", desc: "Más de 20 años trabajando con golfistas exigentes." },
-  { icon: ShieldCheck, title: "Confianza", desc: "Transparencia, honestidad y resultados comprobados." },
+  { icon: Cpu, k: "v1" },
+  { icon: MessageSquare, k: "v2" },
+  { icon: Award, k: "v3" },
+  { icon: ShieldCheck, k: "v4" },
 ];
 
 function Home() {
+  const { t } = useI18n();
   const { data: reviews = [] } = useQuery({
     queryKey: ["reviews-home"],
     queryFn: async () => {
@@ -124,204 +128,583 @@ function Home() {
       return data;
     },
   });
+
   return (
-    <div className="bg-primary-deep text-primary-foreground">
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-[#050606]">
-        {/* Image as absolute background layer — outside the content grid */}
-        <img
+    <div className="bg-atelier text-atelier-ink">
+      <HeroSection />
+      <IntroSection />
+
+      <ServicesSection />
+      <RitualSection />
+
+      <ExpertsSection />
+      <ValuesSection />
+      <CircuitSection />
+      <PartnerCoursesSection />
+      <ReviewsSection reviews={reviews} />
+      <SignOffSection />
+    </div>
+  );
+}
+
+/* --------------------------------- INTRO ---------------------------------- */
+
+/**
+ * Manifest, set as a two-column block: the statement runs large down the left
+ * and the photo sits quiet on the right. The column ratio, the type size and
+ * the flat treatment of the image all pull weight towards the words on purpose.
+ */
+function IntroSection() {
+  const { t } = useI18n();
+  return (
+    <section className="py-16 md:py-24">
+      <div className="container-fortux">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.75fr_1fr] lg:gap-16">
+          <Reveal>
+            <blockquote className="font-display text-[clamp(2rem,4.6vw,3.9rem)] font-bold uppercase leading-[0.98] text-balance">
+              {t("atl.quote")}
+            </blockquote>
+            <div className="mt-6 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-atelier-brass">
+              {t("atl.quoteAttr")}
+            </div>
+            <p className="mt-8 max-w-[46ch] text-[15.5px] leading-[1.8] text-atelier-ink/85">
+              {t("atl.intro.after")}
+            </p>
+          </Reveal>
+
+          {/* Flat and unlifted — no white mount, no shadow — so it reads as a
+              reference image next to the statement rather than a feature. */}
+          <Reveal delay={160} as="figure">
+            <img
+              src={gripAssemblyImg}
+              alt={t("atl.fig.grip")}
+              loading="lazy"
+              width={1100}
+              height={825}
+              className="block w-full border border-atelier-line object-cover opacity-90"
+            />
+            <figcaption className="mt-2.5 flex items-center justify-between font-display text-[10px] uppercase tracking-[0.08em] text-atelier-brass">
+              <span>{t("atl.fig.grip")}</span>
+              <span>{t("atl.figNote")}</span>
+            </figcaption>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------- SHARED BITS ------------------------------- */
+
+/**
+ * Full-bleed hero: the photo runs edge to edge with the headline resting on the
+ * scrimmed left side. This deliberately drops the mounted-plate framing the rest
+ * of the page uses, so the gallery code is carried instead by the cartela rule
+ * directly beneath the image.
+ *
+ * Veil stops were measured, not eyeballed: the gradients were composited over
+ * the real photo at each breakpoint, checking both the worst pixel behind the
+ * copy and how much of the photo's own brightness survives. A single diagonal
+ * veil failed on narrow screens (1.92:1 at 375px) because the cover-crop puts
+ * the lit concrete wall behind bottom-anchored text; veiling everything to fix
+ * that left only ~15% of the photo's light and killed the image. Splitting the
+ * two cases at lg holds 5.6-10.9:1 on the copy while keeping ~75% of the photo.
+ */
+function HeroSection() {
+  const { t } = useI18n();
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 64]);
+
+  const group = { visible: { transition: { staggerChildren: 0.09 } } };
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE } },
+  };
+
+  return (
+    <>
+      <section
+        ref={sectionRef}
+        className="relative isolate flex min-h-[440px] items-end overflow-hidden bg-atelier-ink md:min-h-[560px] lg:min-h-[640px]"
+      >
+        <motion.img
           src={heroImg}
-          alt="Ajuste técnico de un hierro de golf en máquina de fitting Fortux"
+          alt="Colocación de un grip nuevo en un putter sujeto en el torno del taller Fortux"
           width={1536}
-          height={1280}
+          height={1024}
+          className="absolute inset-x-0 -inset-y-[9%] h-[118%] w-full object-cover object-[center_45%]"
+          style={{ y: reduced ? 0 : parallaxY }}
+        />
+
+        {/* Below lg the copy spans the full width, so it needs a bottom band —
+            but the band stops at 72% so the top of the frame stays clear. */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] lg:hidden"
           style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: "58vw",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center right",
-            zIndex: 0,
+            background:
+              "linear-gradient(to top, rgba(20,16,12,0.94) 0%, rgba(20,16,12,0.86) 50%, rgba(20,16,12,0.30) 72%, rgba(20,16,12,0.02) 100%)",
+          }}
+        />
+        {/* From lg the copy sits in a narrow left column, so the veil can fall
+            away sharply and leave the right two thirds of the photo untouched. */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] hidden lg:block"
+          style={{
+            background:
+              "linear-gradient(78deg, rgba(20,16,12,0.94) 0%, rgba(20,16,12,0.88) 40%, rgba(20,16,12,0.22) 60%, rgba(20,16,12,0.04) 78%, rgba(20,16,12,0) 100%)",
           }}
         />
 
-        {/* Gradient overlays above the image and background */}
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#141619] via-[#0A0B0D] via-[#050607] to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[55%] bg-gradient-to-r from-[#0A0B0D] via-[#0A0B0D]/80 to-transparent" />
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-[#050606]/45 via-transparent to-[#050606]/35" />
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_55%_75%_at_100%_50%,rgba(185,217,134,0.02),transparent_60%)]" />
-
-        {/* Text content inside the max-width container */}
-        <div className="container-fortux relative z-[2] py-20 md:py-28 lg:py-32 animate-fade-up">
-          <div className="relative max-w-xl">
-            <span className="inline-block text-[12px] font-medium uppercase tracking-[0.22em] text-secondary">
-              Servicios integrales de golf
-            </span>
-            <h1 className="mt-5 font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] text-balance">
-              Precisión técnica para cuidar tu{" "}
-              <span className="text-secondary">equipo.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-[15px] md:text-[16px] text-primary-foreground/70 leading-[1.6]">
-              Reparamos, ajustamos y optimizamos tu material con experiencia,
-              asesoramiento y atención personalizada.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+        <motion.div
+          className="container-fortux relative z-[2] py-12 md:py-16"
+          variants={reduced ? undefined : group}
+          initial={reduced ? undefined : "hidden"}
+          animate={reduced ? undefined : "visible"}
+        >
+          <div className="max-w-[46ch]">
+            <motion.span
+              variants={reduced ? undefined : item}
+              className="inline-block font-display text-[10px] font-bold uppercase tracking-[0.2em] text-[#D8C79E]"
+            >
+              {t("atl.dateline")}
+            </motion.span>
+            <motion.h1
+              variants={reduced ? undefined : item}
+              className="mt-5 font-display text-[2.1rem] font-bold uppercase leading-[1.02] tracking-[0.005em] text-balance text-atelier md:text-5xl lg:text-6xl"
+            >
+              {t("atl.hero.title")}
+            </motion.h1>
+            <motion.p
+              variants={reduced ? undefined : item}
+              className="mt-5 max-w-[38ch] text-[14.5px] leading-[1.7] text-atelier/85"
+            >
+              {t("atl.hero.sub")}
+            </motion.p>
+            <motion.div variants={reduced ? undefined : item} className="mt-8 flex flex-wrap gap-3">
               <a
-                href={waLink("Hola, querría solicitar una revisión de mi equipo.")}
+                href={waLink(t("atl.wa.review"))}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex h-11 items-center gap-2 rounded-[6px] bg-[#B9D986] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-[#050606] transition-colors hover:bg-[#c5e294]"
+                className="inline-flex h-11 items-center gap-2 bg-[#D8C79E] px-6 font-display text-[11px] font-bold uppercase tracking-[0.1em] text-atelier-ink transition-colors hover:bg-[#e4d6b3]"
               >
-                Solicitar revisión <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+                {t("atl.hero.cta1")} <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
               </a>
               <Link
                 to="/servicios"
-                className="inline-flex h-11 items-center rounded-[6px] border border-white/[0.22] bg-transparent px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-white/85 transition-colors hover:bg-white/[0.04] hover:text-white"
+                className="inline-flex h-11 items-center border border-[#D8C79E]/70 px-6 font-display text-[11px] font-bold uppercase tracking-[0.1em] text-atelier transition-colors hover:bg-[#D8C79E] hover:text-atelier-ink"
               >
-                Ver servicios
+                {t("atl.hero.cta2")}
               </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
-
-        {/* SERVICE INDEX STRIP */}
-        <div className="relative z-[2] border-t border-white/[0.06] bg-gradient-to-r from-[#0A0B0D]/95 via-[#050607]/70 to-transparent">
-          <div className="container-fortux grid grid-cols-3 gap-y-6 py-8 md:grid-cols-6">
-            {SERVICE_INDEX.map((s) => (
-              <div key={s.n} className="flex flex-col items-start">
-                <span className="font-display text-2xl font-bold text-secondary">{s.n}</span>
-                <span className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/80">{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* SERVICES */}
-      <section className="py-20 md:py-28">
-        <div className="container-fortux">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-balance">
-              Nuestros servicios
-            </h2>
-            <Link to="/servicios" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-secondary hover:text-secondary/80">
-              Ver todos los servicios <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      {/* Cartela rule — keeps the gallery code the full-bleed image gives up. */}
+      <div className="border-b border-atelier-line">
+        <div className="container-fortux flex items-center justify-between gap-4 py-3 font-display text-[10px] uppercase tracking-[0.08em] text-atelier-brass">
+          <span>{t("atl.fig1")}</span>
+          <span>{t("atl.figNote")}</span>
+        </div>
+      </div>
+    </>
+  );
+}
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((s) => (
-              <Link
-                key={s.title}
-                to={s.to}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition-all hover:-translate-y-1 hover:border-secondary/40 hover:bg-white/[0.06]"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
+/* -------------------------------- SERVICES -------------------------------- */
+
+/**
+ * Horizontal accordion: all six photos stay on screen as narrow desaturated
+ * strips and the active one opens, regains colour and reveals its description.
+ * It cycles on its own every 3.5s.
+ *
+ * Autoplay is deliberately easy to stop — it halts on hover, on keyboard focus,
+ * when scrolled out of view, and via an explicit button — and never starts at
+ * all under prefers-reduced-motion. Each strip is a real link, so the section
+ * is fully usable with no pointer and no JavaScript-driven motion.
+ */
+function ServicesSection() {
+  const { t } = useI18n();
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-15% 0px" });
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [held, setHeld] = useState(false);
+
+  const running = !paused && !held && inView && !reduced;
+
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => setActive((a) => (a + 1) % SERVICES.length), 3500);
+    return () => window.clearInterval(id);
+  }, [running]);
+
+  return (
+    <section className="py-14 md:py-20">
+      <div className="container-fortux">
+        <span className="mb-8 block font-display text-[10.5px] font-bold uppercase tracking-[0.16em] text-atelier-brass">
+          {t("atl.services.eyebrow")}
+        </span>
+
+        <Reveal>
+          <div
+            ref={ref}
+            className="flex h-[420px] flex-col gap-1 md:h-[320px] md:flex-row"
+            onMouseEnter={() => setHeld(true)}
+            onMouseLeave={() => setHeld(false)}
+          >
+            {SERVICES.map((s, i) => {
+              const on = i === active;
+              return (
+                <Link
+                  key={s.k}
+                  to={s.to}
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => {
+                    setActive(i);
+                    setHeld(true);
+                  }}
+                  onBlur={() => setHeld(false)}
+                  style={{ flexGrow: on ? 3.4 : 1 }}
+                  className="group relative min-h-0 flex-1 basis-0 overflow-hidden border border-atelier-line transition-[flex-grow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                >
                   <img
                     src={s.img}
-                    alt={s.title}
+                    alt=""
+                    aria-hidden="true"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className={
+                      "absolute inset-0 h-full w-full object-cover transition-[filter] duration-500 " +
+                      (on ? "" : "brightness-[0.82] grayscale-[0.55]")
+                    }
                   />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-                </div>
-                <div className="p-6">
-                  <h3 className="font-display text-xl font-bold leading-snug">{s.title}</h3>
-                  <p className="mt-2 text-sm text-primary-foreground/70 leading-relaxed">{s.desc}</p>
-                </div>
-              </Link>
-            ))}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(20,16,12,0.82)] via-[rgba(20,16,12,0.18)] to-transparent"
+                  />
+                  <span className="absolute left-2.5 top-2 z-[2] font-display text-[9px] font-bold tracking-[0.1em] text-[#D8C79E]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={
+                      "absolute bottom-3 left-3 right-3 z-[2] block font-display font-bold uppercase leading-[1.05] text-atelier " +
+                      (on ? "text-lg md:text-xl" : "text-[13px] md:[writing-mode:vertical-rl] md:rotate-180 md:bottom-3 md:right-auto")
+                    }
+                  >
+                    {t(`atl.${s.k}.t`)}
+                  </span>
+                  <span
+                    className={
+                      "absolute bottom-11 left-3 right-3 z-[2] hidden text-[12px] leading-[1.45] text-atelier/90 transition-opacity duration-300 md:block " +
+                      (on ? "opacity-100 delay-150" : "opacity-0")
+                    }
+                  >
+                    {t(`atl.${s.k}.d`)}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
-        </div>
-      </section>
+        </Reveal>
 
-      {/* PROCESS */}
-      <section className="border-y border-white/10 bg-primary/40 py-20 md:py-28">
-        <div className="container-fortux">
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold">Así trabajamos</h2>
-          <div className="relative mt-14 grid gap-10 md:grid-cols-4">
-            <div className="pointer-events-none absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-secondary/40 to-transparent md:block" />
-            {PROCESS.map((p) => (
-              <div key={p.n} className="relative">
-                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-secondary/60 bg-primary-deep font-display text-lg font-bold text-secondary">
-                  {p.n}
-                </div>
-                <h3 className="mt-5 font-display text-lg font-bold">{p.title}</h3>
-                <p className="mt-2 text-sm text-primary-foreground/70 leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <Link
+            to="/servicios"
+            className="inline-flex items-center gap-2 font-display text-[11px] font-semibold uppercase tracking-wide text-atelier-accent hover:text-atelier-brass"
+          >
+            {t("atl.services.cta")} <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          {!reduced && (
+            <button
+              type="button"
+              onClick={() => setPaused((p) => !p)}
+              aria-label={t("atl.anim.label")}
+              className="border border-atelier-accent px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-atelier-accent transition-colors hover:bg-atelier-accent hover:text-atelier"
+            >
+              {paused ? t("atl.anim.play") : t("atl.anim.pause")}
+            </button>
+          )}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* EXPERTS — Gerard y Marc */}
-      <section id="nosotros" className="py-20 md:py-28">
-        <div className="container-fortux grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-secondary">
-              Expertos en los que puedes confiar
-            </span>
-            <h2 className="mt-4 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-balance">
-              Gerard y Marc, experiencia y pasión por el golf
-            </h2>
-            <p className="mt-5 max-w-xl text-primary-foreground/75 leading-relaxed">
-              Más de 20 años de experiencia combinando conocimiento técnico,
-              asesoramiento y atención personalizada para cuidar cada detalle
-              de tu equipo.
+/* ---------------------------------- RITUAL --------------------------------- */
+
+/* The van drawing dissolves away exactly where the reading column starts, so it
+   never sits behind running text — and the fade doubles as a hint of movement.
+   It is pure decoration, hence empty alt and aria-hidden. */
+const VAN_FADE =
+  "linear-gradient(100deg, transparent 4%, rgba(0,0,0,0.35) 32%, #000 78%)";
+
+function RitualSection() {
+  const { t } = useI18n();
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.5"] });
+  const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <section className="relative overflow-hidden py-14 md:py-20">
+      <img
+        src={vanLineArt}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="pointer-events-none absolute -bottom-[6%] -right-[6%] w-[110%] select-none opacity-[0.08] md:w-[70%] md:opacity-30"
+        style={{ WebkitMaskImage: VAN_FADE, maskImage: VAN_FADE }}
+      />
+
+      <div className="container-fortux relative">
+        <div ref={ref} className="relative max-w-[62ch] pl-8">
+          <span className="mb-6 block font-display text-[10.5px] font-bold uppercase tracking-[0.16em] text-atelier-brass">
+            {t("atl.ritual.eyebrow")}
+          </span>
+          <div className="pointer-events-none absolute left-[3px] top-9 bottom-1.5 w-px bg-atelier-line" />
+          <motion.div
+            className="pointer-events-none absolute left-[3px] top-9 w-px origin-top bg-atelier-brass"
+            style={{ scaleY: reduced ? 1 : lineScale, height: "calc(100% - 44px)" }}
+          />
+          {PROCESS.map((p, i) => (
+            <Reveal key={p} delay={i * 90} className="relative mb-9 last:mb-0">
+              <span className="absolute -left-8 top-1.5 h-1.5 w-1.5 rounded-full bg-atelier-brass" />
+              <h3 className="font-display text-lg font-bold uppercase">{t(`atl.${p}.t`)}</h3>
+              <p className="mt-1 text-[13.5px] leading-[1.6] text-atelier-muted">{t(`atl.${p}.d`)}</p>
+            </Reveal>
+          ))}
+
+          <Reveal delay={PROCESS.length * 90} className="mt-10 border-t border-atelier-line pt-6">
+            <h3 className="font-display text-xl font-bold uppercase text-atelier-accent">
+              {t("atl.mobile.title")}
+            </h3>
+            <p className="mt-2 max-w-[46ch] text-[13.5px] leading-[1.6] text-atelier-muted">
+              {t("atl.mobile.body")}
             </p>
-            <div className="mt-8">
-              <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/5 text-primary-foreground hover:bg-white/10 font-semibold uppercase tracking-wide">
-                <Link to="/contacto">Conócenos</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-primary to-primary-deep">
-            <img
-              src={teamPhoto.url}
-              alt="Gerard Rubio y Marc Fortuny — equipo Fortux"
-              loading="lazy"
-              className="relative mx-auto h-auto w-full max-w-xl object-contain"
-            />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-around px-[10%] pb-3 text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
-              <span>Gerard Rubio</span>
-              <span>Marc Fortuny</span>
-            </div>
-          </div>
+          </Reveal>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* VALUES ROW */}
-      <section className="border-y border-white/10 bg-primary-deep/80 py-14">
-        <div className="container-fortux grid gap-8 md:grid-cols-4">
-          {VALUES.map((v) => (
-            <div key={v.title} className="flex items-start gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-secondary/40 text-secondary">
-                <v.icon className="h-5 w-5" />
-              </span>
+/* --------------------------------- EXPERTS -------------------------------- */
+
+function StatCounter({ target, suffix = "", label }: { target: number; suffix?: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const reduced = useReducedMotion();
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    // Safety net: if the viewport observer never fires (e.g. a
+    // backgrounded/prerendered tab), don't leave the stat stuck at 0.
+    const fallback = window.setTimeout(() => setValue((v) => (v === 0 ? target : v)), 5000);
+    return () => window.clearTimeout(fallback);
+  }, [target]);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (reduced) {
+      setValue(target);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const duration = 1100;
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * target));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, reduced, target]);
+
+  return (
+    <div ref={ref}>
+      <div className="font-display text-4xl font-semibold tabular-nums text-atelier-accent">
+        {value}
+        {suffix}
+      </div>
+      <div className="mt-1 font-display text-[10px] uppercase tracking-[0.14em] text-atelier-muted">{label}</div>
+    </div>
+  );
+}
+
+/* Split screen: half the section each, portraits full-bleed with the name over
+   a bottom scrim.
+ *
+ * Both values below were measured by compositing the scrim over the two real
+ * photographs at desktop and mobile crops, not eyeballed. The brand brass
+ * (#D8C79E) only reaches 3.5:1 on the role label, well under the 4.5:1 floor
+ * for text that size. Rather than wash the label out to near-white, the scrim
+ * carries a little more weight (0.93) so a genuinely brass tone still clears
+ * it: worst case 4.83:1. Change either one and the pair needs re-measuring. */
+const SPLIT_SCRIM =
+  "linear-gradient(0deg, rgba(20,16,12,0.93) 0%, rgba(20,16,12,0.22) 62%, rgba(20,16,12,0) 100%)";
+const SPLIT_BRASS = "#E6D8B6";
+
+function TeamHalf({
+  photo,
+  name,
+  role,
+  line,
+  delay,
+}: {
+  photo: string;
+  name: string;
+  role: string;
+  line: string;
+  delay: number;
+}) {
+  return (
+    <Reveal delay={delay} className="relative flex min-h-[360px] items-end overflow-hidden md:min-h-[460px]">
+      <img
+        src={photo}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover object-[center_35%]"
+      />
+      <div className="pointer-events-none absolute inset-0" style={{ background: SPLIT_SCRIM }} />
+      <div className="relative z-[2] p-6 md:p-7">
+        <h3 className="font-display text-3xl font-bold uppercase leading-none text-atelier md:text-4xl">
+          {name}
+        </h3>
+        <div
+          className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.16em]"
+          style={{ color: SPLIT_BRASS }}
+        >
+          {role}
+        </div>
+        <p className="mt-3 max-w-[34ch] text-[12.5px] leading-[1.5] text-atelier/90">{line}</p>
+      </div>
+    </Reveal>
+  );
+}
+
+function ExpertsSection() {
+  const { t } = useI18n();
+  return (
+    <section id="nosotros" className="border-y border-atelier-line py-14 md:py-20">
+      <div className="container-fortux">
+        <Reveal>
+          <span className="mb-6 block font-display text-[10.5px] font-bold uppercase tracking-[0.18em] text-atelier-brass">
+            {t("atl.experts.eyebrow")}
+          </span>
+        </Reveal>
+
+        <div className="grid gap-1 md:grid-cols-2">
+          <TeamHalf
+            photo={marcPhoto}
+            name="Marc Fortuny"
+            role={t("atl.team.marcRole")}
+            line={t("atl.team.marcLine")}
+            delay={0}
+          />
+          <TeamHalf
+            photo={gerardPhoto}
+            name="Gerard Rubio"
+            role={t("atl.team.gerardRole")}
+            line={t("atl.team.gerardLine")}
+            delay={120}
+          />
+        </div>
+
+        <Reveal className="mt-6 flex flex-wrap items-center justify-between gap-6">
+          <Link
+            to="/contacto"
+            className="inline-flex h-11 items-center border border-atelier-accent px-6 font-display text-[11px] font-semibold uppercase tracking-[0.1em] text-atelier-accent transition-colors hover:bg-atelier-accent hover:text-atelier"
+          >
+            {t("atl.experts.cta")}
+          </Link>
+          <StatCounter target={20} suffix="+" label={t("atl.experts.stat")} />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------- VALUES --------------------------------- */
+
+function ValuesSection() {
+  const { t } = useI18n();
+  return (
+    <section className="py-14">
+      <div className="container-fortux">
+        <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-4">
+          {VALUES.map((v, i) => (
+            <Reveal key={v.k} delay={i * 70} className="flex items-start gap-3.5">
+              <v.icon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-atelier-brass" strokeWidth={1.5} />
               <div className="min-w-0">
-                <h3 className="font-display text-sm font-bold uppercase tracking-wide text-secondary">{v.title}</h3>
-                <p className="mt-1 text-sm text-primary-foreground/70 leading-relaxed">{v.desc}</p>
+                <h3 className="font-display text-[16px] font-bold uppercase">{t(`atl.${v.k}.t`)}</h3>
+                <p className="mt-0.5 text-[12.5px] leading-[1.55] text-atelier-muted">{t(`atl.${v.k}.d`)}</p>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* CIRCUIT */}
-      <section className="py-20 md:py-24">
-        <div className="container-fortux">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-secondary">Torneos</span>
-              <h2 className="mt-3 font-display text-3xl md:text-4xl font-bold">Circuit Fortux × Mulligan 2026</h2>
-            </div>
-            <a href={SITE.circuitUrl} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-secondary hover:text-secondary/80">
-              Ver web del circuito <ExternalLink className="h-4 w-4" />
-            </a>
+/* --------------------------------- CIRCUIT -------------------------------- */
+
+/**
+ * The embed sits inside a scoreboard-style frame with both clubs' crests in the
+ * header bar, so it reads as part of the page rather than a pasted-in widget.
+ *
+ * The two crests are sized to equal *area*, not equal height: once trimmed of
+ * their margins Mulligan's is near-square (1.04) while Fortux's is landscape
+ * (1.37), so matching heights would leave Fortux visibly wider and therefore
+ * bigger. h-16/h-14 and h-14/h-12 put them within 1% of the same area.
+ */
+function CircuitSection() {
+  const { t } = useI18n();
+  return (
+    <section className="border-y border-atelier-line py-16 md:py-20">
+      <div className="container-fortux">
+        <Reveal>
+          <span className="font-display text-[10.5px] font-bold uppercase tracking-[0.18em] text-atelier-brass">
+            {t("atl.circuit.eyebrow")}
+          </span>
+        </Reveal>
+
+        <Reveal delay={80} className="mt-4 border-2 border-atelier-ink bg-white">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 border-b-2 border-atelier-ink px-5 py-5 sm:flex-nowrap sm:justify-between sm:px-8">
+            <img
+              src={mulliganCrest}
+              alt="Mulligan Pitch & Putt Club"
+              loading="lazy"
+              className="order-1 h-14 w-auto sm:h-16"
+            />
+            <h2 className="order-3 w-full text-center font-display text-[clamp(1.45rem,3.4vw,2.6rem)] font-bold uppercase leading-none text-balance sm:order-2 sm:w-auto">
+              Circuit Fortux × Mulligan 2026
+            </h2>
+            <img
+              src={fortuxCrest}
+              alt="Fortux Golf"
+              loading="lazy"
+              className="order-2 h-12 w-auto sm:order-3 sm:h-14"
+            />
           </div>
-          <div className="relative mt-8 w-full overflow-hidden rounded-2xl border border-white/10" style={{ height: "1380px" }}>
+
+          {/* The embed has no fixed height of its own: the circuit site's content
+              gets much taller as it narrows (its collaborators block ends at
+              y≈2320 when 1212px wide but y≈4691 at 375px), so a single height
+              either clipped the sponsors on phones or left ~2400px of blank
+              space on desktop. These steps were measured on the live site and
+              each one lands in the ~64px gap between the sponsors block and the
+              circuit's own footer, which we do not want to show twice.
+              This will drift if that site is redesigned — the durable fix is for
+              it to post its height to the parent. */}
+          <div className="relative w-full overflow-hidden h-[4700px] sm:h-[4180px] md:h-[3980px] min-[900px]:h-[3540px] lg:h-[2660px] xl:h-[2260px]">
             <iframe
               src="https://fortux.fairwaystudio.ai/"
               title="Circuit Fortux x Mulligan 2026"
@@ -331,95 +714,181 @@ function Home() {
               style={{ top: "-90px", height: "calc(100% + 90px)" }}
             />
           </div>
-          <CircuitTabs />
-        </div>
-      </section>
+        </Reveal>
 
-      {/* PARTNER COURSES */}
-      <section className="border-t border-white/10 py-20 md:py-24">
-        <div className="container-fortux">
-          <h2 className="text-center font-display text-3xl md:text-4xl font-bold">Camps Col·laboradors</h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-primary-foreground/65">
-            Treballem amb una àmplia xarxa de camps de golf arreu de Catalunya.
-          </p>
-          <div className="mt-12 flex flex-wrap justify-center gap-3">
-            {PARTNER_COURSES.map((c) => (
-              <div
-                key={c.name}
-                className="group relative flex aspect-square w-[calc(50%-0.5rem)] items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-all hover:border-secondary/40 hover:bg-white/[0.06] sm:w-[calc(33.333%-0.75rem)] md:w-[calc(20%-0.75rem)] lg:w-[calc(14.2857%-0.75rem)]"
-              >
-                <img
-                  src={c.url}
-                  alt={`Camp de golf ${c.name}`}
-                  loading="lazy"
-                  className="max-h-full max-w-full object-contain brightness-0 invert opacity-70 transition-all duration-300 group-hover:opacity-100"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <Reveal className="mt-5">
+          <a
+            href={SITE.circuitUrl}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex items-center gap-2 font-display text-[11px] font-semibold uppercase tracking-wide text-atelier-accent hover:text-atelier-brass"
+          >
+            {t("atl.circuit.cta")} <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </Reveal>
 
-      {/* REVIEWS */}
-      {reviews.length > 0 && (
-        <section className="border-t border-white/10 py-20 md:py-24">
-          <div className="container-fortux">
-            <h2 className="text-center font-display text-3xl md:text-4xl font-bold">Lo que dicen nuestros clientes</h2>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              {reviews.slice(0, 3).map((r) => (
-                <article key={r.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                  <div className="flex items-center gap-3">
-                    {r.avatar_url ? (
-                      <img src={r.avatar_url} alt={r.author_name} className="h-10 w-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm font-semibold">
-                        {r.author_name.slice(0, 2).toUpperCase()}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold truncate">{r.author_name}</div>
-                      {r.author_location && (
-                        <div className="text-xs text-primary-foreground/60 truncate">{r.author_location}</div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-4 flex gap-0.5">
-                    {Array.from({ length: r.rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-secondary text-secondary" />
-                    ))}
-                  </div>
-                  <p className="mt-3 text-primary-foreground/85 leading-relaxed">"{r.content}"</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FINAL CTA */}
-      <section className="py-20 md:py-24">
-        <div className="container-fortux">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-primary to-primary-deep p-10 md:p-16 text-center shadow-elegant">
-            <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-secondary/20 blur-3xl" />
-            <h2 className="relative font-display text-3xl md:text-5xl font-bold text-balance">
-              ¿Listo para poner tu equipo a punto?
-            </h2>
-            <p className="relative mt-4 mx-auto max-w-xl text-primary-foreground/75">
-              Te ayudamos a revisarlo, ajustarlo y dejarlo listo para jugar con total confianza.
-            </p>
-            <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold uppercase tracking-wide">
-                <a href={waLink("Hola, querría solicitar una revisión de mi equipo.")} target="_blank" rel="noopener">
-                  Solicitar revisión <ArrowRight className="ml-1.5 h-4 w-4" />
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+        <CircuitTabs />
+      </div>
+    </section>
   );
 }
+
+/* ----------------------------- PARTNER COURSES ----------------------------- */
+
+function PartnerCoursesSection() {
+  const { t } = useI18n();
+  const track = [...PARTNER_COURSES, ...PARTNER_COURSES];
+  return (
+    <section className="py-16 md:py-20">
+      <div className="container-fortux">
+        <Reveal>
+          <h2 className="text-center font-display text-3xl font-bold uppercase md:text-4xl">{t("atl.partners.title")}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-[13.5px] text-atelier-muted">
+            {t("atl.partners.sub")}
+          </p>
+        </Reveal>
+      </div>
+      <div className="mt-10 overflow-hidden">
+        <div className="marquee-track flex w-max gap-3">
+          {track.map((c, i) => (
+            <div
+              key={`${c.name}-${i}`}
+              aria-hidden={i >= PARTNER_COURSES.length}
+              className="group relative flex h-24 w-32 shrink-0 items-center justify-center border border-atelier-line bg-white p-4 transition-colors duration-300 hover:border-atelier-brass"
+            >
+              <img
+                src={c.url}
+                alt={i < PARTNER_COURSES.length ? `Camp de golf ${c.name}` : ""}
+                loading="lazy"
+                className="max-h-full max-w-full object-contain opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------- REVIEWS -------------------------------- */
+
+type Review = {
+  id: string;
+  author_name: string;
+  author_location: string | null;
+  rating: number;
+  content: string;
+  avatar_url: string | null;
+};
+
+function ReviewsSection({ reviews }: { reviews: Review[] }) {
+  const { t } = useI18n();
+  if (reviews.length === 0) return null;
+  return (
+    <section className="border-t border-atelier-line py-16 md:py-20">
+      <div className="container-fortux">
+        <Reveal>
+          <h2 className="text-center font-display text-3xl font-bold uppercase md:text-4xl">{t("atl.reviews.title")}</h2>
+        </Reveal>
+        <div className="mx-auto mt-10 grid max-w-5xl gap-8 md:grid-cols-3">
+          {reviews.slice(0, 3).map((r, i) => (
+            <Reveal key={r.id} delay={i * 90} as="article">
+              <div className="flex gap-0.5">
+                {Array.from({ length: r.rating }).map((_, idx) => (
+                  <Star key={idx} className="h-3.5 w-3.5 fill-atelier-brass text-atelier-brass" />
+                ))}
+              </div>
+              <p className="mt-3 font-sans italic leading-relaxed text-atelier-ink/90">"{r.content}"</p>
+              <div className="mt-4 flex items-center gap-3">
+                {r.avatar_url ? (
+                  <img src={r.avatar_url} alt={r.author_name} className="h-9 w-9 rounded-full object-cover" />
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-atelier-line text-xs font-semibold">
+                    {r.author_name.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <div className="truncate font-display text-[11.5px] font-semibold uppercase tracking-wide">{r.author_name}</div>
+                  {r.author_location && (
+                    <div className="truncate text-[11px] text-atelier-muted">{r.author_location}</div>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- SIGN-OFF -------------------------------- */
+
+function MagneticLink({
+  children,
+  className,
+  href,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  href: string;
+}) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 200, damping: 15 });
+  const springY = useSpring(y, { stiffness: 200, damping: 15 });
+  const reduced = useReducedMotion();
+
+  function handleMove(e: ReactMouseEvent<HTMLAnchorElement>) {
+    if (reduced) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.3);
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.3);
+  }
+  function handleLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  return (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener"
+      className={className}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ x: springX, y: springY }}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+function SignOffSection() {
+  const { t } = useI18n();
+  return (
+    <section className="py-20 md:py-24">
+      <div className="container-fortux">
+        <Reveal className="mx-auto max-w-xl text-center">
+          <img src={fortuxMark} alt="Fortux" className="mx-auto h-16 w-auto object-contain md:h-20" />
+          <p className="mt-8 font-sans text-xl italic leading-[1.5] md:text-2xl">
+            {t("atl.signoff")}
+          </p>
+          <div className="mt-4 font-display text-[10px] uppercase tracking-[0.14em] text-atelier-brass">{t("atl.signoff.kicker")}</div>
+          <MagneticLink
+            href={waLink("Hola, querría solicitar una revisión de mi equipo.")}
+            className="mt-8 inline-flex h-12 items-center gap-2 border border-atelier-accent px-8 font-display text-[11px] font-semibold uppercase tracking-[0.1em] text-atelier-accent transition-colors hover:bg-atelier-accent hover:text-atelier"
+          >
+            {t("atl.signoff.cta")} <ArrowRight className="h-4 w-4" />
+          </MagneticLink>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------- CIRCUIT TABS --------------------------------- */
 
 const TABS = [
   { key: "rankings", label: "Class. acumulades", icon: BarChart3, url: "https://fortux.fairwaystudio.ai/rankings" },
@@ -439,10 +908,10 @@ function CircuitTabs() {
               key={tab.key}
               type="button"
               onClick={() => setOpen(isOpen ? null : tab.key)}
-              className={`inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-4 text-sm font-semibold uppercase tracking-wider transition-colors ${
+              className={`inline-flex items-center justify-center gap-2 border px-4 py-4 font-display text-[11px] font-semibold uppercase tracking-wider transition-colors ${
                 isOpen
-                  ? "border-secondary bg-secondary text-secondary-foreground"
-                  : "border-white/10 bg-white/[0.04] text-primary-foreground hover:bg-white/[0.08]"
+                  ? "border-atelier-accent bg-atelier-accent text-atelier"
+                  : "border-atelier-line bg-white text-atelier-ink hover:border-atelier-brass"
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -455,7 +924,7 @@ function CircuitTabs() {
           href="https://fortux.fairwaystudio.ai/"
           target="_blank"
           rel="noopener"
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-secondary bg-secondary px-4 py-4 text-sm font-semibold uppercase tracking-wider text-secondary-foreground transition-colors hover:bg-secondary/90"
+          className="inline-flex items-center justify-center gap-2 border border-atelier-accent bg-atelier-accent px-4 py-4 font-display text-[11px] font-semibold uppercase tracking-wider text-atelier transition-colors hover:opacity-90"
         >
           <ExternalLink className="h-4 w-4" />
           <span>Veure web del circuit</span>
@@ -465,7 +934,7 @@ function CircuitTabs() {
       {TABS.map((tab) => (
         <Collapsible key={tab.key} open={open === tab.key}>
           <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-            <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 mt-4" style={{ height: "2000px" }}>
+            <div className="relative w-full overflow-hidden border border-atelier-line bg-white mt-4" style={{ height: "2000px" }}>
               <iframe
                 src={tab.url}
                 title={tab.label}

@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { ArrowRight } from "lucide-react";
+import { Reveal } from "@/components/site/Reveal";
 
 export const Route = createFileRoute("/noticias")({
   head: () => ({
@@ -97,7 +98,7 @@ function Page() {
           <p className="mt-10 text-muted-foreground">{t("news.loading")}</p>
         ) : (
           <div className="mt-10 flex flex-col gap-5">
-            {news.map((n) => {
+            {news.map((n, i) => {
               const inner = (
                 <article className="group grid grid-cols-1 sm:grid-cols-[280px_1fr] gap-0 rounded-2xl border border-border bg-card overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-elegant cursor-pointer">
                   <div className="aspect-[16/10] sm:aspect-auto sm:h-full bg-gradient-hero">
@@ -124,15 +125,19 @@ function Page() {
               );
               if (n.source === "circuit" && n.external_url) {
                 return (
-                  <a key={n.id} href={n.external_url} target="_blank" rel="noopener noreferrer" className="block">
-                    {inner}
-                  </a>
+                  <Reveal key={n.id} delay={Math.min(i, 6) * 60}>
+                    <a href={n.external_url} target="_blank" rel="noopener noreferrer" className="block">
+                      {inner}
+                    </a>
+                  </Reveal>
                 );
               }
               return (
-                <Link key={n.id} to="/noticias/$slug" params={{ slug: n.slug ?? n.id }} className="block">
-                  {inner}
-                </Link>
+                <Reveal key={n.id} delay={Math.min(i, 6) * 60}>
+                  <Link to="/noticias/$slug" params={{ slug: n.slug ?? n.id }} className="block">
+                    {inner}
+                  </Link>
+                </Reveal>
               );
             })}
           </div>
